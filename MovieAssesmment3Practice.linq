@@ -65,7 +65,7 @@ public void ScheduleMovie(TheatreBookingView theatreBookingRequest)
 		var movieRequestLength = Movies.Where(x => x.MovieID == movieBookingRequest.MovieID).Select(x => x.Length).FirstOrDefault();
 
 		TimeSpan movieLength = TimeSpan.FromMinutes(movieRequestLength);
-		TimeSpan movieEndTime = movieBookingRequest.StartTime.TimeOfDay + movieLength;
+		TimeSpan movieEndTime = movieBookingRequest.StartTime.TimeOfDay + movieLength + gapLength;
 
 		if (movieEndTime > elevenPM)
 		{
@@ -75,7 +75,7 @@ public void ScheduleMovie(TheatreBookingView theatreBookingRequest)
 	}
 
 	//no overlap and minimum 20 minute spaces
-	for (int i = 0; i <= 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		MovieBookingView firstMovie = theatreBookingRequest.MovieBookings[i];
 		MovieBookingView secondMovie = theatreBookingRequest.MovieBookings[i + 1];
@@ -116,7 +116,7 @@ public void ScheduleMovie(TheatreBookingView theatreBookingRequest)
 	else
 	{
 		ChangeTracker.Clear();
-		throw new AggregateException("Unable to process the order. Check concerns", errorlist.OrderBy(x => x.Message).ToList());
+		throw new AggregateException(errorlist);
 	}
 }
 
